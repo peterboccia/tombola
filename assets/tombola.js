@@ -3,12 +3,7 @@
 
   const boardEl = document.getElementById("board");
   const extractBtn = document.getElementById("extractBtn");
-  const newGameBtn = document.getElementById("newGameBtn");
-  const prizesBtn = document.getElementById("prizesBtn");
-  const aboutBtn = document.getElementById("aboutBtn");
-  const fullScreenBtn = document.getElementById("fullScreenBtn");
   const currentValueEl = document.getElementById("currentValue");
-  const previousValueEl = document.getElementById("previousValue");
 
   /**
    * State
@@ -19,9 +14,9 @@
   let current = null;
   let previousStack = [];
   let isAnimating = false;
-  const ANIMATION_MS = 500;
+  let ANIMATION_MS = 500;
   const ANIM_HTML =
-    '<img src="./assets/estrazione.gif" alt="Estrazione in corso" class="estrazione-gif">';
+    '<img src="./assets/estrazione-clean.gif" alt="Estrazione in corso" class="estrazione-gif">';
 
   let smorfia = null;
 
@@ -77,6 +72,18 @@
     if (el) el.classList.add("called");
   }
 
+  // Evidenzia la cella dell'ultimo numero chiamato
+  function highlightCurrent(n) {
+    for (let i = 1; i <= TOTAL; i++) {
+      const el = document.getElementById(cellId(i));
+      if (el) el.classList.remove("highlight");
+    }
+    if (n) {
+      const el = document.getElementById(cellId(n));
+      if (el) el.classList.add("highlight");
+    }
+  }
+
   function unmarkAll() {
     for (let i = 1; i <= TOTAL; i++) {
       const el = document.getElementById(cellId(i));
@@ -118,8 +125,15 @@
       // Update max-height after every update
       setTimeout(adjustPreviousListHeight, 0);
     }
+    // Aggiorna highlight
+    highlightCurrent(current);
     if (isAnimating) {
       currentValueEl.innerHTML = ANIM_HTML;
+      // Applica dissolvenza
+      const img = currentValueEl.querySelector(".estrazione-gif");
+      if (img) {
+        img.classList.add("fade-in");
+      }
     } else {
       if (current) {
         const info = getSmorfiaInfo(current);
@@ -164,6 +178,8 @@
     if (isAnimating || called.size >= TOTAL) return;
     // Stack: add current to the top if it exists
     if (current != null) previousStack.unshift(current);
+    // Rimuovi highlight dal precedente
+    highlightCurrent(null);
     current = null;
     isAnimating = true;
     updateDisplays();
@@ -179,6 +195,7 @@
       called.add(n);
       current = n;
       markCalled(n);
+      highlightCurrent(n);
       saveStateToCookie();
       updateDisplays();
     }, ANIMATION_MS);
@@ -190,6 +207,7 @@
       called: Array.from(called),
       current,
       previousStack,
+      animationMs: ANIMATION_MS,
     };
     document.cookie =
       "tombolaState=" +
@@ -205,6 +223,9 @@
       called = new Set(state.called || []);
       current = state.current || null;
       previousStack = state.previousStack || [];
+      if (typeof state.animationMs === "number") {
+        ANIMATION_MS = state.animationMs;
+      }
       // Mark called numbers (after board is built)
       for (const n of called) markCalled(n);
       updateDisplays();
@@ -214,6 +235,10 @@
   /** Build board */
   function buildBoard() {
     const frag = document.createDocumentFragment();
+
+    const emptyCell = document.createElement("div");
+    emptyCell.className = "empty";
+
     for (let i = 1; i <= TOTAL; i++) {
       const cell = document.createElement("div");
       cell.className = "cell";
@@ -221,25 +246,102 @@
       cell.textContent = String(i);
       cell.setAttribute("role", "gridcell");
       frag.appendChild(cell);
+
+      // Add an empty span after every multiple of 5 to create the cartella spacing
+      if (i % 10 === 5) {
+        frag.appendChild(emptyCell.cloneNode());
+      } else if (i % 30 === 0 && i !== TOTAL) {
+        for (let j = 0; j < 11; j++) {
+          frag.appendChild(emptyCell.cloneNode());
+        }
+      }
     }
     boardEl.appendChild(frag);
   }
 
+  /** Settings modal management **/
+  async function showSettingsModal() {
+    // create the content of the modal
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.gap = "12px";
+    // Label
+    const label = document.createElement("label");
+    label.textContent = "Durata animazione estrazione (ms):";
+    label.htmlFor = "animationMsInput";
+    // Slider
+    const input = document.createElement("input");
+    input.type = "range";
+    input.min = "0";
+    input.max = "5000";
+    input.step = "25";
+    input.value = String(ANIMATION_MS);
+    input.id = "animationMsInput";
+    // Number display
+    const valueDisplay = document.createElement("span");
+    valueDisplay.textContent = input.value + " ms";
+    input.addEventListener("input", () => {
+      valueDisplay.textContent = input.value + " ms";
+    });
+    // Wrapper
+    const row = document.createElement("div");
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.gap = "8px";
+    row.appendChild(input);
+    row.appendChild(valueDisplay);
+    container.appendChild(label);
+    container.appendChild(row);
+    // Show modal
+    const result = await window.showModalHtml({
+      title: "Impostazioni",
+      content: container,
+      confirmText: "Salva",
+      cancelText: "Annulla",
+    });
+    // update ANIMATION_MS in case of confirm
+    if (result) {
+      ANIMATION_MS = parseInt(input.value, 10);
+      saveStateToCookie();
+    }
+  }
+
   /** Menu handlers */
   function initMenu() {
-    newGameBtn.addEventListener("click", newGame);
+    // button to start new game
+    document.getElementById("newGameBtn")?.addEventListener("click", newGame);
+    // button to extract number
     extractBtn.addEventListener("click", extractNumber);
-    fullScreenBtn.addEventListener("click", toggleFullscreen);
-    prizesBtn.addEventListener("click", () => {
+    // button to toggle fullscreen
+    document
+      .getElementById("fullScreenBtn")
+      ?.addEventListener("click", toggleFullscreen);
+    // button to calculate prizes (placeholder)
+    document.getElementById("prizesBtn")?.addEventListener("click", () => {
       alert(
         "Calcolo premi non disponibile: servono le cartelle dei giocatori."
       );
     });
-    aboutBtn.addEventListener("click", () => {
+    // button to show about info
+    document.getElementById("aboutBtn")?.addEventListener("click", () => {
       alert(
         "Tombola – semplice tabellone 1–90.\n\nFunzioni:\n• Nuova partita: azzera estrazioni e tabellone.\n• Estrai numero: estrae un numero non ancora chiamato.\n• Calcola premi: placeholder (richiede cartelle per i premi).\n\nmany thanks to Peter Boccia"
       );
     });
+    // button to switch theme
+    document.getElementById("switchThemeBtn")?.addEventListener("click", () => {
+      document.body.classList.toggle("dark-theme");
+      if (document.body.classList.contains("dark-theme")) {
+        localStorage.setItem("theme", "dark");
+      } else {
+        localStorage.setItem("theme", "light");
+      }
+    });
+    // button to show settings modal
+    document
+      .getElementById("settingsBtn")
+      ?.addEventListener("click", showSettingsModal);
     // Spacebar triggers extractNumber
     window.addEventListener("keydown", function (e) {
       if (
@@ -256,6 +358,10 @@
 
   /** Init */
   function init() {
+    // Get the latest stored theme
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark-theme");
+    }
     // Load Smorfia data
     fetch("./assets/smorfia.json")
       .then((r) => r.json())

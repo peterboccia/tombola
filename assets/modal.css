@@ -38,7 +38,7 @@
   color: #1e293b;
   margin-bottom: 2px;
 }
-.modal-message {
+.modal-message, .modal-content {
   color: #334155;
   font-size: 1em;
   margin-bottom: 8px;
