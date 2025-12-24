@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tombola</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./assets/style.css" />
+    <link rel="stylesheet" href="./assets/modal.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="./icons/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="./icons/favicon.svg" />
+    <link rel="shortcut icon" href="./icons/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./icons/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="./site.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="Tombola" />
+  </head>
+  <body>
+    <header>
+      <div class="menu" role="toolbar" aria-label="Menu">
+        <h1>Tombola</h1>
+        <div class="menu-actions">
+          <button id="newGameBtn" class="menu-btn" type="button">
+            Nuova partita
+          </button>
+          <button id="prizesBtn" class="menu-btn" type="button" style="display: none;">
+            Calcola premi
+          </button>
+          <button id="aboutBtn" class="menu-btn" type="button" style="display: none;">
+            Informazioni
+          </button>
+          <button id="fullScreenBtn" class="menu-btn menu-btn-icon" type="button">
+            <img src="./assets/full-screen-arrow-icon.svg" />
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="app">
+      <section class="status-panel" aria-live="polite">
+        <button id="extractBtn" type="button">Estrai numero</button>
+        <div
+          id="currentDisplay"
+          class="display"
+          aria-label="Ultimo numero chiamato"
+        >
+          <div class="label">Ultimo numero chiamato</div>
+          <div id="currentValue" class="value">–</div>
+        </div>
+        <div
+          id="previousDisplay"
+          class="display"
+          aria-label="Numeri precedenti"
+        >
+          <div class="label">Numeri precedenti</div>
+          <div id="previousList" class="previous-list"></div>
+        </div>
+      </section>
+
+      <section class="board-wrapper">
+        <div id="board" class="board" aria-label="Tabellone 10 per 9"></div>
+      </section>
+    </main>
+
+    <footer></footer>
+
+    <script src="./assets/modal.js"></script>
+    <script src="./assets/tombola.js"></script>
+  </body>
+</html>
