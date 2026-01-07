@@ -3,6 +3,7 @@
   border-color: #fff200;
   box-shadow: 0 0 0 4px rgba(255, 242, 0, 0.5), 0 0 16px 2px #fff200;
   animation: pulse-border 1s infinite;
+  z-index: 10;
 }
 @keyframes pulse-border {
   0% {
@@ -342,9 +343,6 @@ button#extractBtn:disabled {
   transition: transform 120ms ease, background 120ms ease,
     border-color 120ms ease, box-shadow 120ms ease;
 }
-.cell:hover {
-  transform: translateY(-1px);
-}
 .cell.called {
   background: linear-gradient(180deg, #166534, #065f46);
   color: #ffffff;
@@ -360,12 +358,10 @@ button#extractBtn:disabled {
 /* Orientation-specific layout */
 /* Portrait: status (c | d | b) on top, board below */
 @media (orientation: portrait) {
-  
-.display .value img.estrazione-gif {
-  max-height: 50px;
-  width: auto;
-}
-
+  .display .value img.estrazione-gif {
+    max-height: 50px;
+    width: auto;
+  }
 }
 
 /* Landscape: board 80%, side panel 20% with b, c, d stacked */
