@@ -20,6 +20,25 @@
 
   let smorfia = null;
 
+  /**
+   * Speech synthesis setup
+   */
+
+  // Speech synthesis for number and description
+  function speakNumberAndDescription(n) {
+    if (!vocalSynthEnabled || !window.speechSynthesis) return;
+    let text = `${n}`;
+    // const info = getSmorfiaInfo(n);
+    // if (info) {
+    //   if (info.napoletano) text += `. ${info.napoletano}`;
+    //   if (info.significato) text += `. ${info.significato}`;
+    // }
+    const utter = new window.SpeechSynthesisUtterance(text);
+    utter.lang = "it-IT";
+    window.speechSynthesis.cancel(); // Stop any previous speech
+    window.speechSynthesis.speak(utter);
+  }
+
   function getSmorfiaInfo(n) {
     if (!smorfia) return null;
     return smorfia.find((e) => e.numero === n);
@@ -187,17 +206,20 @@
     // After animation, pick and show new number
     setTimeout(() => {
       const n = pickRandomRemaining();
-      isAnimating = false;
-      if (n == null) {
+      speakNumberAndDescription(n);
+      setTimeout(() => {
+        isAnimating = false;
+        if (n == null) {
+          updateDisplays();
+          return;
+        }
+        called.add(n);
+        current = n;
+        markCalled(n);
+        highlightCurrent(n);
+        saveStateToCookie();
         updateDisplays();
-        return;
-      }
-      called.add(n);
-      current = n;
-      markCalled(n);
-      highlightCurrent(n);
-      saveStateToCookie();
-      updateDisplays();
+      }, 100);
     }, ANIMATION_MS);
   }
 
@@ -260,6 +282,8 @@
   }
 
   /** Settings modal management **/
+  let vocalSynthEnabled = localStorage.getItem("vocalSynthEnabled") !== "false";
+
   async function showSettingsModal() {
     // create the content of the modal
     const container = document.createElement("div");
@@ -293,6 +317,23 @@
     row.appendChild(valueDisplay);
     container.appendChild(label);
     container.appendChild(row);
+
+    // Vocal synth toggle
+    const synthRow = document.createElement("div");
+    synthRow.style.display = "flex";
+    synthRow.style.alignItems = "center";
+    synthRow.style.gap = "8px";
+    const synthLabel = document.createElement("label");
+    synthLabel.textContent = "Sintesi vocale abilitata:";
+    synthLabel.htmlFor = "vocalSynthToggle";
+    const synthToggle = document.createElement("input");
+    synthToggle.type = "checkbox";
+    synthToggle.id = "vocalSynthToggle";
+    synthToggle.checked = vocalSynthEnabled;
+    synthRow.appendChild(synthLabel);
+    synthRow.appendChild(synthToggle);
+    container.appendChild(synthRow);
+
     // Show modal
     const result = await window.showModalHtml({
       title: "Impostazioni",
@@ -300,9 +341,14 @@
       confirmText: "Salva",
       cancelText: "Annulla",
     });
-    // update ANIMATION_MS in case of confirm
+    // update ANIMATION_MS and vocalSynthEnabled in case of confirm
     if (result) {
       ANIMATION_MS = parseInt(input.value, 10);
+      vocalSynthEnabled = synthToggle.checked;
+      localStorage.setItem(
+        "vocalSynthEnabled",
+        vocalSynthEnabled ? "true" : "false"
+      );
       saveStateToCookie();
     }
   }
@@ -362,6 +408,15 @@
     if (localStorage.getItem("theme") === "dark") {
       document.body.classList.add("dark-theme");
     }
+
+    // Pre-warm speech synthesis engine
+    if (window.speechSynthesis) {
+      const warmupUtter = new window.SpeechSynthesisUtterance("");
+      warmupUtter.lang = "it-IT";
+      window.speechSynthesis.speak(warmupUtter);
+      window.speechSynthesis.cancel();
+    }
+
     // Load Smorfia data
     fetch("./assets/smorfia.json")
       .then((r) => r.json())
