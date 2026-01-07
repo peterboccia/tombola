@@ -28,8 +28,21 @@ Per utilizzarlo per le tue feste basta accedere alla pagina demo dedicata: [Tomb
 - `tombola.js`: logica dell’app (stato, estrazioni, aggiornamento UI) e molto importante **costanti** (Tra cui la costante di animazione dell'estrazione qualora si voglia ridurla o allungarla in durata.
 - `README.md`: questo file.
 
+## Ultime considerazioni
+In rete esistono numerosi strumenti dedicati alla gestione della tombola.  
+Questo progetto non nasce con l’obiettivo di competere con soluzioni più avanzate, ma di rispondere a esigenze pratiche emerse durante partite reali: la mancanza di tutti i numeri nel *ruoto* (o molti scheggiati) del tabellone completo, la gestione del gioco in contesti con molte persone e la necessità di rendere i numeri estratti ben visibili a tutta la platea.
+Da qui infatti la scelta di renderlo il più semplice solo HTML e Javascript così da poterlo renderlo anche "standalone" (e cioè: scarichi lo zip e lo porti dove vuoi e lo lanci anche senza connessione).
+
+Per questo motivo il layout è stato progettato per occupare il 100% dello schermo, sia in altezza che in larghezza, così da poter essere mostrato su monitor o proiettori senza necessità di scrolling.
+
+Sarebbe possibile integrare anche la gestione delle cartelle, con marcatura automatica dei numeri - funzionalità già presente in diverse soluzioni open‑source facilmente reperibili online - ma non era questo il mio obiettivo. Preferisco mantenere il piacere del segnare manualmente, con scorze di mandarini magari. Infine le cartelle in formato PDF sono comunque facilmente scaricabili e stampabili, così da poter avere la tombola ovunque disponibile home-made!
+
+Il tabellone tradizionale è sempre stato molto apprezzato: ricordo che chi lo prendeva giocava con sei cartelle contemporaneamente, e non tutti erano disposti a sostenerne il costo o il compito.  
+Con questo progetto, invece, chiunque può gestire la tombola in autonomia.
+
 ## ***Buone feste***
 Questo progetto è stato ideato e sviluppato per gioco da Pietro Boccia utilizzando semplicemente HTML, CSS e Javascript per rendere più facili le tombolate tra amici specie in associazioni, oratori e altri centri di incontro in cui la gestione del tabellone a schermo possa essere facilitata.
 
 - Quando tutti i numeri sono estratti, il pulsante "Estrai numero" viene disabilitato.
+
 
