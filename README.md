@@ -4,7 +4,10 @@ Una semplice web app (HTML + JavaScript puro) per gestire il tabellone della Tom
 
 ## Funzionalità
 - Nuova partita: azzera le estrazioni e ripulisce il tabellone.
-- Estrai numero: estrae casualmente un numero tra 1 e 90 non ancora chiamato, evidenziandolo in verde. Il tutto reso più naturale con un'attesa con animazione e rendere il gioco più divertente. Aggiunta infine shortcut per velocizzare e facilitare l'operazione (SPAZIO).
+- Estrai numero: estrae casualmente un numero tra 1 e 90 non ancora chiamato, evidenziandolo in verde. Shortcut per velocizzare e facilitare l'operazione (SPAZIO).
+- **Chiamata vocale del numero**: ad ogni estrazione, il numero e la sua descrizione vengono letti ad alta voce tramite sintesi vocale (Speech Synthesis). Questa funzione è abilitata di default e può essere disabilitata/riabilitata dal menu delle impostazioni (icona ingranaggio).
+- La funzione di chiamata vocale utilizza la tecnologia [Web Speech API - SpeechSynthesis](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis) integrata nei browser moderni. La lingua utilizzata è l'italiano (it-IT). Se il browser non supporta la sintesi vocale, la funzione viene ignorata automaticamente.
+
 - Ultimo numero chiamato: mostra l'ultima estrazione.
 - Numeri precedenti: mostra in un pannello dal penultimo numero estratto fino all'inizio (in ordine dal penultimo estratto).
 - Coming Soon: Calcola premi: pulsante segnaposto (per calcolare i premi servono le cartelle dei giocatori, non incluse in questa app).
@@ -22,10 +25,9 @@ Per utilizzarlo per le tue feste basta accedere alla pagina demo dedicata: [Tomb
 1. Scarica il repo
 2. Apri il file `index.html` con un browser moderno (Chrome, Edge, Firefox, Safari).
 
-## Struttura del progetto
 - `index.html`: markup della pagina.
 - `style.css`: stili globali dell'app
-- `tombola.js`: logica dell’app (stato, estrazioni, aggiornamento UI) e molto importante **costanti** (Tra cui la costante di animazione dell'estrazione qualora si voglia ridurla o allungarla in durata.
+- `tombola.js`: logica dell’app (stato, estrazioni, aggiornamento UI, sintesi vocale, costanti tra cui la durata animazione estrazione).
 - `README.md`: questo file.
 
 ## Ultime considerazioni
