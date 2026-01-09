@@ -417,13 +417,15 @@
       window.speechSynthesis.cancel();
     }
 
-    // Load Smorfia data
-    fetch("./assets/smorfia.json")
-      .then((r) => r.json())
-      .then((data) => {
-        smorfia = data;
-        loadStateFromCookie();
-      });
+    // Load Smorfia data from JS variable (no fetch)
+    if (typeof smorfiaData !== "undefined") {
+      smorfia = smorfiaData;
+      loadStateFromCookie();
+    } else {
+      smorfia = [];
+      loadStateFromCookie();
+      console.warn("smorfiaData not found. Please include smorfia-data.js before tombola.js");
+    }
     buildBoard();
     initMenu();
     updateDisplays();
