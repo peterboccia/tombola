@@ -248,9 +248,6 @@
       if (typeof state.animationMs === "number") {
         ANIMATION_MS = state.animationMs;
       }
-      // Mark called numbers (after board is built)
-      for (const n of called) markCalled(n);
-      updateDisplays();
     } catch (e) {}
   }
 
@@ -427,6 +424,8 @@
       console.warn("smorfiaData not found. Please include smorfia-data.js before tombola.js");
     }
     buildBoard();
+    // Mark called numbers after board is built
+    for (const n of called) markCalled(n);
     initMenu();
     updateDisplays();
     window.addEventListener("resize", adjustPreviousListHeight);
